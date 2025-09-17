@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sanitär-Rohrrechner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+        }
+        .details-summary::after {
+            content: '+';
+            font-weight: bold;
+            position: absolute;
+            right: 1rem;
+        }
+        details[open] .details-summary::after {
+            content: '−';
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-6">
+
+    <div class="container mx-auto bg-white shadow-xl rounded-2xl p-8">
+        <h1 class="text-3xl font-bold text-center text-blue-800 mb-6">Sanitär-Rohrrechner</h1>
+        <p class="text-center text-gray-600 mb-8">
+            Berechnen Sie schnell und präzise die Rohrdimensionierung für Ihre Sanitärprojekte.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Eingaben -->
+            <div class="bg-blue-50 p-6 rounded-lg shadow-inner">
+                <button id="reset-button" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 mb-4">Rechner zurücksetzen</button>
+
+                <h2 class="text-xl font-semibold text-blue-700 mb-4">Entnahmestellen</h2>
+                <h3 class="font-bold text-blue-600 mt-4 mb-2">Not- und Sicherheitseinrichtungen</h3>
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-semibold mb-2" for="anzahl-notdusche">Anzahl Notduschen (70 l/min)</label>
+                    <input type="number" id="anzahl-notdusche" value="0" min="0" class="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-semibold mb-2" for="anzahl-augendusche">Anzahl Augenduschen (8 l/min)</label>
+                    <input type="number" id="anzahl-augendusche" value="0" min="0" class="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                 <div class="mb-4">
+                    <label class="block text-gray-700 font-semibold mb-2" for="gleichzeitigkeit-notdusche">Gleichzeitige Notduschen</label>
+                    <input type="number" id="gleichzeitigkeit-notdusche" value="0" min="0" max="0" class="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-semibold mb-2" for="gleichzeitigkeit-augendusche">Gleichzeitige Augenduschen</label>
+                    <input type="number" id="gleichzeitigkeit-augendusche" value="0" min="0" max="0" class="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                
+                <h3 class="font-bold text-blue-600 mt-8 mb-2">Standard-Entnahmestellen (ZE)</h3>
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-semibold mb-2" for="anzahl-wc-spuelkasten">Anzahl WCs m. Spülkasten (0.5 ZE)</label>
+                    <input type="number" id="anzahl-wc-spuelkasten" value="0" min="0" class="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                 <div class="mb-4">
+                    <label class="block text-gray-700 font-semibold mb-2" for="anzahl-wc-druckspueler">Anzahl WCs m. Druckspüler (2.0 ZE)</label>
+                    <input type="number" id="anzahl-wc-druckspueler" value="0" min="0" class="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-semibold mb-2" for="anzahl-urinal-druckspueler">Anzahl Urinale m. Druckspüler (1.0 ZE)</label>
+                    <input type="number" id="anzahl-urinal-druckspueler" value="0" min="0" class="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-semibold mb-2" for="anzahl-dusche">Anzahl Duschen (1.0 ZE)</label>
+                    <input type="number" id="anzahl-dusche" value="0" min="0" class="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-semibold mb-2" for="anzahl-waschbecken">Anzahl Waschbecken (0.5 ZE)</label>
+                    <input type="number" id="anzahl-waschbecken" value="0" min="0" class="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="mb-4">
+                    <h4 class="block text-gray-700 font-semibold mb-2">Gesamte ZE-Summe: <span id="gesamtZeOutput" class="text-blue-600">0.0</span></h4>
+                    <label class="block text-gray-700 font-semibold mb-2" for="korrektur-ze">Korrekturwert ZE</label>
+                    <input type="number" id="korrektur-ze" value="0" step="0.1" class="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-semibold mb-2" for="korrektur-volumenstrom">Korrekturwert Volumenstrom (l/min)</label>
+                    <input type="number" id="korrektur-volumenstrom" value="0" step="0.1" class="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <h2 class="text-xl font-semibold text-blue-700 mb-4 mt-8">Installationsparameter</h2>
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-semibold mb-2" for="laenge">Rohrlänge (m)</label>
+                    <input type="number" id="laenge" value="80" class="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-semibold mb-2" for="versorgungsdruck">Verfügbarer Druck (bar)</label>
+                    <input type="number" id="versorgungsdruck" value="5" step="0.1" class="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-semibold mb-2" for="mindestdruck">Mindestfließdruck (bar)</label>
+                    <input type="number" id="mindestdruck" value="1.5" step="0.1" class="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-semibold mb-2" for="formteile">Zuschlag für Formteile (%)</label>
+                    <input type="number" id="formteile" value="20" class="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-semibold mb-2" for="rohr">Rohrdimension (DN)</label>
+                    <select id="rohr" class="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="15">DN 15 (1/2")</option>
+                        <option value="20">DN 20 (3/4")</option>
+                        <option value="25">DN 25 (1")</option>
+                        <option value="32" selected>DN 32 (1 1/4")</option>
+                        <option value="40">DN 40 (1 1/2")</option>
+                        <option value="50">DN 50 (2")</option>
+                        <option value="65">DN 65 (2 1/2")</option>
+                        <option value="80">DN 80 (3")</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-semibold mb-2" for="material">Rohrmaterial</label>
+                    <select id="material" class="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="0.0000015" selected>Edelstahl</option>
+                        <option value="0.0000016">Kupfer</option>
+                        <option value="0.00015">Verzinkter Stahl</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-semibold mb-2" for="system">Installationsart</label>
+                    <select id="system" class="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-ring-blue-500">
+                        <option value="reihe">Reiheninstallation</option>
+                        <option value="ring">Ringinstallation</option>
+                    </select>
+                </div>
+                <div class="mt-8">
+                    <details class="bg-gray-200 rounded-lg p-4 cursor-pointer">
+                        <summary class="font-bold text-blue-700 text-lg details-summary">
+                            <input type="checkbox" id="stichleitung-toggle" class="mr-2"> Detaillierte Stichleitungs-Berechnung
+                        </summary>
+                        <div id="stichleitungen-container" class="mt-4 space-y-4">
+                            <!-- Dynamische Felder für Stichleitungen werden hier hinzugefügt -->
+                        </div>
+                    </details>
+                </div>
+            </div>
+
+            <!-- Ergebnisse -->
+            <div class="bg-green-50 p-6 rounded-lg shadow-inner">
+                <h2 class="text-xl font-semibold text-green-700 mb-4">Ergebnisse</h2>
+                <div class="space-y-4">
+                    <div class="bg-white p-4 rounded-md shadow-md">
+                        <h3 class="font-bold text-gray-700">Gesamtvolumenstrom (100% Gleichzeitigkeit)</h3>
+                        <p id="theoretischerGesamtVolumenstromOutput" class="text-blue-600 text-2xl mt-2">-- l/min</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-md shadow-md">
+                        <h3 class="font-bold text-gray-700">Gesamt-Volumenstrom (für Berechnung)</h3>
+                        <p id="gesamtVolumenstromOutput" class="text-blue-600 text-2xl mt-2">-- l/min</p>
+                    </div>
+                     <div class="bg-white p-4 rounded-md shadow-md">
+                        <h3 class="font-bold text-gray-700">Fließgeschwindigkeit (v)</h3>
+                        <p id="fliessgeschwindigkeit" class="text-2xl mt-2">-- m/s</p>
+                        <p id="v-status" class="text-sm font-semibold mt-1">Status: </p>
+                    </div>
+                    <div class="bg-white p-4 rounded-md shadow-md">
+                        <h3 class="font-bold text-gray-700">Rohrreibungsverlust (Δp)</h3>
+                        <p id="druckverlust" class="text-2xl mt-2">-- bar</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-md shadow-md">
+                        <h3 class="font-bold text-gray-700">Restdruck am Ende (p_Ende)</h3>
+                        <p id="restdruck" class="text-2xl mt-2">-- bar</p>
+                        <p id="p-status" class="text-sm font-semibold mt-1">Status: </p>
+                    </div>
+                    <div class="bg-white p-4 rounded-md shadow-md">
+                        <h3 class="font-bold text-gray-700">Rohrquerschnitt (A)</h3>
+                        <p id="querschnitt" class="text-blue-600 text-xl mt-2">-- cm²</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-md shadow-md">
+                        <h3 class="font-bold text-gray-700">Rohrvolumen (V)</h3>
+                        <p id="volumen" class="text-blue-600 text-xl mt-2">-- l</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-md shadow-md">
+                        <h3 class="font-bold text-gray-700">Spülung (DIN-konform)</h3>
+                        <p id="spuelvolumen" class="text-blue-600 text-xl mt-2">-- l</p>
+                        <p id="spuelzeit" class="text-blue-600 text-xl mt-2">-- min</p>
+                    </div>
+                </div>
+                <div id="hinweis-box" class="mt-6 p-4 rounded-md text-sm font-semibold hidden"></div>
+            </div>
+        </div>
+        
+        <div class="mt-8">
+            <details class="bg-gray-100 rounded-lg p-4 cursor-pointer">
+                <summary class="font-bold text-blue-800 text-lg">
+                    Informationen zum Rechner und Formeln
+                </summary>
+                <div class="mt-4 text-gray-700">
+                    <h3 class="font-semibold text-blue-700 mb-2">Grundlagen der Berechnung</h3>
+                    <p class="mb-4">
+                        Dieser Rechner nutzt die grundlegenden hydraulischen Prinzipien zur Berechnung von Rohrleitungssystemen. Die Hauptberechnung des Druckverlustes basiert auf der <b>Darcy-Weisbach-Gleichung</b>, einer in der Ingenieurwissenschaft anerkannten Formel. Der Reibungsbeiwert wird mittels der <b>Swamee-Jain-Gleichung</b> ermittelt, die für alle gängigen Strömungsbereiche und Rohrmaterialien gilt.
+                    </p>
+                    <p class="mb-4">
+                        Um eine realistische Rohrnetzberechnung durchzuführen, werden die Entnahmestellen in zwei Kategorien unterteilt, basierend auf ihrer Priorität und ihrem Nutzungsverhalten:
+                        <ul>
+                            <li><b>Not- und Sicherheitseinrichtungen:</b> Hier wird der Volumenstrom für die Berechnung direkt aus der manuell eingegebenen Anzahl an gleichzeitig genutzten Duschen ermittelt. Dies stellt sicher, dass die Sicherheit immer an erster Stelle steht.</li>
+                            <li><b>Standard-Entnahmestellen:</b> Für Verbraucher wie WCs und Waschbecken wird nicht die volle Summe der Volumenströme angenommen. Stattdessen wird die Berechnung auf Basis von **Zapfstellen-Einheiten (ZE)** nach DIN 1988-300 durchgeführt, um die geringere Wahrscheinlichkeit der gleichzeitigen Nutzung abzubilden.</li>
+                        </ul>
+                    </p>
+                    <h3 class="font-semibold text-blue-700 mb-2">Verwendete Formeln</h3>
+                    <p class="mb-2">
+                        <span class="font-mono">
+                            <span class="font-bold">Fließgeschwindigkeit (v)</span>: v = Q / A
+                        </span>
+                        <br>
+                        Dabei ist Q der Volumenstrom in m³/s und A die Rohrquerschnittsfläche in m².
+                    </p>
+                    <p class="mb-2">
+                        <span class="font-mono">
+                            <span class="font-bold">Reynoldszahl (Re)</span>: Re = (v ⋅ d) / ν
+                        </span>
+                        <br>
+                        Die Reynoldszahl charakterisiert das Strömungsverhalten. ν ist die kinematische Viskosität des Wassers (1.004 ⋅ 10⁻⁶ m²/s bei 20°C).
+                    </p>
+                     <p class="mb-2">
+                        <span class="font-mono">
+                            <span class="font-bold">Reibungsbeiwert (λ)</span>: λ = 0.25 / [log₁₀(k / (3.7d) + 5.74 / Re⁰.⁹)]²
+                        </span>
+                        <br>
+                        Die Swamee-Jain-Gleichung ist eine Näherung der Colebrook-White-Gleichung zur Bestimmung des Reibungsbeiwertes, basierend auf der relativen Rauigkeit (k/d) und der Reynoldszahl (Re).
+                    </p>
+                    <p class="mb-2">
+                        <span class="font-mono">
+                            <span class="font-bold">Druckverlust (Δp)</span>: Δp = λ ⋅ (L / d) ⋅ (ρ ⋅ v² / 2)
+                        </span>
+                        <br>
+                        Die Darcy-Weisbach-Gleichung berechnet den Druckverlust. λ ist der Reibungsbeiwert, L die Rohrlänge, d der Innendurchmesser und ρ die Dichte des Wassers (1000 kg/m³).
+                    </p>
+                    <p class="mb-2">
+                        <span class="font-mono">
+                            <span class="font-bold">Volumeninhalt (V)</span>: V = A ⋅ L
+                        </span>
+                    </p>
+                    <h3 class="font-semibold text-blue-700 mt-4 mb-2">Informationen zur Spülung</h3>
+                    <p class="mb-4">
+                        Für die Erhaltung der Trinkwasserhygiene nach DIN EN 806-4 und DIN 1988-200 muss der gesamte Wasserinhalt der Rohrleitung regelmäßig ausgetauscht werden.
+                        <br>
+                        Das Spülvolumen entspricht dem gesamten Volumen des Rohrnetzes. Die Spülzeit wird basierend auf einem typischen Spülvolumenstrom berechnet.
+                        <br>
+                        Dieser Rechner nutzt einen Spülvolumenstrom von <b>10 l/min</b>, was einen realistischen Wert für kleinere Spülventile darstellt.
+                    </p>
+                    <h3 class="font-semibold text-blue-700 mt-4 mb-2">Wichtige Hinweise</h3>
+                    <ul class="list-disc list-inside space-y-2">
+                        <li>Der Mindestfließdruck für Notduschen liegt nach DIN EN 15154 in der Regel bei <b>mindestens 1.5 bar</b>.</li>
+                        <li>Die Fließgeschwindigkeit sollte <b>2.0 m/s</b> nicht überschreiten, um Geräusche und Materialerosion zu vermeiden.</li>
+                        <li>Der pauschale Zuschlag für Formteile ist eine Vereinfachung. Für eine exakte Berechnung müssen die Verluste jedes einzelnen Formteils individuell ermittelt werden.</li>
+                    </ul>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const anzahlInputs = {
+                'notdusche': document.getElementById('anzahl-notdusche'),
+                'augendusche': document.getElementById('anzahl-augendusche'),
+                'wc-spuelkasten': document.getElementById('anzahl-wc-spuelkasten'),
+                'wc-druckspueler': document.getElementById('anzahl-wc-druckspueler'),
+                'urinal-druckspueler': document.getElementById('anzahl-urinal-druckspueler'),
+                'dusche': document.getElementById('anzahl-dusche'),
+                'waschbecken': document.getElementById('anzahl-waschbecken')
+            };
+            const gleichzeitigkeitNotduscheInput = document.getElementById('gleichzeitigkeit-notdusche');
+            const gleichzeitigkeitAugenduscheInput = document.getElementById('gleichzeitigkeit-augendusche');
+            const korrekturZeInput = document.getElementById('korrektur-ze');
+            const laengeInput = document.getElementById('laenge');
+            const versorgungsdruckInput = document.getElementById('versorgungsdruck');
+            const mindestdruckInput = document.getElementById('mindestdruck');
+            const formteileInput = document.getElementById('formteile');
+            const rohrSelect = document.getElementById('rohr');
+            const materialSelect = document.getElementById('material');
+            const systemSelect = document.getElementById('system');
+            const stichleitungenContainer = document.getElementById('stichleitungen-container');
+            const stichleitungToggle = document.getElementById('stichleitung-toggle');
+            const theoretischerGesamtVolumenstromOutput = document.getElementById('theoretischerGesamtVolumenstromOutput');
+            const gesamtVolumenstromOutput = document.getElementById('gesamtVolumenstromOutput');
+            const fliessgeschwindigkeitOutput = document.getElementById('fliessgeschwindigkeit');
+            const druckverlustOutput = document.getElementById('druckverlust');
+            const restdruckOutput = document.getElementById('restdruck');
+            const vStatusOutput = document.getElementById('v-status');
+            const pStatusOutput = document.getElementById('p-status');
+            const querschnittOutput = document.getElementById('querschnitt');
+            const volumenOutput = document.getElementById('volumen');
+            const spuelvolumenOutput = document.getElementById('spuelvolumen');
+            const spuelzeitOutput = document.getElementById('spuelzeit');
+            const hinweisBox = document.getElementById('hinweis-box');
+            const gesamtZeOutput = document.getElementById('gesamtZeOutput');
+            const resetButton = document.getElementById('reset-button');
+            const korrekturVolumenstromInput = document.getElementById('korrektur-volumenstrom');
+
+            const verbraucherDaten = {
+                'notdusche': { lpm: 70, ze: 0 },
+                'augendusche': { lpm: 8, ze: 0 },
+                'wc-spuelkasten': { lpm: 9, ze: 0.5 },
+                'wc-druckspueler': { lpm: 24, ze: 2.0 },
+                'urinal-druckspueler': { lpm: 6, ze: 1.0 },
+                'dusche': { lpm: 12, ze: 1.0 },
+                'waschbecken': { lpm: 6, ze: 0.5 }
+            };
+            
+            const rohrdaten = {
+                '15': { id: 'DN 15', innen_d: 0.015 },
+                '20': { id: 'DN 20', innen_d: 0.020 },
+                '25': { id: 'DN 25', innen_d: 0.025 },
+                '32': { id: 'DN 32', innen_d: 0.032 },
+                '40': { id: 'DN 40', innen_d: 0.040 },
+                '50': { id: 'DN 50', innen_d: 0.050 },
+                '65': { id: 'DN 65', innen_d: 0.065 },
+                '80': { id: 'DN 80', innen_d: 0.080 }
+            };
+
+            const spuelVolumenstrom = 10; // l/min für die Spülberechnung
+
+            function calculateVs(summeZe) {
+                if (summeZe === 0) return 0;
+                // Vereinfachte, aber praxisnahe Formel nach DIN 1988
+                return 10 * Math.pow(summeZe, 0.5); 
+            }
+
+            function updateStichleitungenUI() {
+                const gesamtAnzahlVerbraucher = {
+                    'notdusche': parseInt(anzahlInputs['notdusche'].value) || 0,
+                    'augendusche': parseInt(anzahlInputs['augendusche'].value) || 0,
+                    'wc-spuelkasten': parseInt(anzahlInputs['wc-spuelkasten'].value) || 0,
+                    'wc-druckspueler': parseInt(anzahlInputs['wc-druckspueler'].value) || 0,
+                    'urinal-druckspueler': parseInt(anzahlInputs['urinal-druckspueler'].value) || 0,
+                    'dusche': parseInt(anzahlInputs['dusche'].value) || 0,
+                    'waschbecken': parseInt(anzahlInputs['waschbecken'].value) || 0
+                };
+
+                stichleitungenContainer.innerHTML = '';
+                if (!stichleitungToggle.checked) return;
+                
+                for (const type in gesamtAnzahlVerbraucher) {
+                    for (let i = 0; i < gesamtAnzahlVerbraucher[type]; i++) {
+                        const labelText = `${type.charAt(0).toUpperCase() + type.slice(1)} ${i + 1} (${verbraucherDaten[type].lpm} l/min)`;
+                        
+                        const div = document.createElement('div');
+                        div.className = 'bg-white p-4 rounded-md shadow-md';
+                        div.setAttribute('data-consumer-type', type);
+                        div.innerHTML = `
+                            <h3 class="font-bold text-gray-700 mb-2">${labelText}</h3>
+                            <div class="mb-2">
+                                <label class="block text-gray-600 mb-1">Länge Stichleitung (m)</label>
+                                <input type="number" data-type="laenge" value="2" min="0" class="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500 stichleitung-input">
+                            </div>
+                            <div class="mb-2">
+                                <label class="block text-gray-600 mb-1">Rohrdimension</label>
+                                <select data-type="rohr" class="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500 stichleitung-input">
+                                    <option value="15">DN 15 (1/2")</option>
+                                    <option value="20">DN 20 (3/4")</option>
+                                    <option value="25">DN 25 (1")</option>
+                                    <option value="32">DN 32 (1 1/4")</option>
+                                    <option value="40">DN 40 (1 1/2")</option>
+                                    <option value="50">DN 50 (2")</option>
+                                    <option value="65">DN 65 (2 1/2")</option>
+                                    <option value="80">DN 80 (3")</option>
+                                </select>
+                            </div>
+                            <div class="mb-2">
+                                <label class="block text-gray-600 mb-1">Zuschlag Formteile (%)</label>
+                                <input type="number" data-type="formteile" value="20" min="0" class="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500 stichleitung-input">
+                            </div>
+                             <div class="bg-blue-50 p-3 rounded-md mt-4">
+                                <h4 class="font-bold text-gray-700">Ergebnis Stichleitung</h4>
+                                <p class="text-xs text-gray-500" data-output="result">--</p>
+                            </div>
+                        `;
+                        stichleitungenContainer.appendChild(div);
+                    }
+                }
+                
+                document.querySelectorAll('.stichleitung-input').forEach(input => {
+                    input.addEventListener('input', calculate);
+                });
+            }
+
+            function updateVolumenstrom() {
+                const anzahlNotduschen = parseInt(anzahlInputs['notdusche'].value) || 0;
+                const anzahlAugendusche = parseInt(anzahlInputs['augendusche'].value) || 0;
+                const anzahlWcSpuelkasten = parseInt(anzahlInputs['wc-spuelkasten'].value) || 0;
+                const anzahlWcDruckspueler = parseInt(anzahlInputs['wc-druckspueler'].value) || 0;
+                const anzahlUrinal = parseInt(anzahlInputs['urinal-druckspueler'].value) || 0;
+                const anzahlDusche = parseInt(anzahlInputs['dusche'].value) || 0;
+                const anzahlWaschbecken = parseInt(anzahlInputs['waschbecken'].value) || 0;
+                
+                gleichzeitigkeitNotduscheInput.max = anzahlNotduschen;
+                gleichzeitigkeitAugenduscheInput.max = anzahlAugendusche;
+                
+                const gleichzeitigeNotduschen = Math.min(parseInt(gleichzeitigkeitNotduscheInput.value) || 0, anzahlNotduschen);
+                const gleichzeitigeAugenduschen = Math.min(parseInt(gleichzeitigkeitAugenduscheInput.value) || 0, anzahlAugendusche);
+                
+                const zeWcSpuelkasten = anzahlWcSpuelkasten * verbraucherDaten['wc-spuelkasten'].ze;
+                const zeWcDruckspueler = anzahlWcDruckspueler * verbraucherDaten['wc-druckspueler'].ze;
+                const zeUrinal = anzahlUrinal * verbraucherDaten['urinal-druckspueler'].ze;
+                const zeDusche = anzahlDusche * verbraucherDaten['dusche'].ze;
+                const zeWaschbecken = anzahlWaschbecken * verbraucherDaten['waschbecken'].ze;
+                const korrekturZe = parseFloat(korrekturZeInput.value) || 0;
+                const summeZe = zeWcSpuelkasten + zeWcDruckspueler + zeUrinal + zeDusche + zeWaschbecken + korrekturZe;
+                
+                const qZeLpm = calculateVs(summeZe);
+                
+                let theoretischerVolumenstrom = (anzahlNotduschen * verbraucherDaten['notdusche'].lpm) + 
+                                                (anzahlAugendusche * verbraucherDaten['augendusche'].lpm) + 
+                                                (anzahlWcSpuelkasten * verbraucherDaten['wc-spuelkasten'].lpm) +
+                                                (anzahlWcDruckspueler * verbraucherDaten['wc-druckspueler'].lpm) +
+                                                (anzahlUrinal * verbraucherDaten['urinal-druckspueler'].lpm) +
+                                                (anzahlDusche * verbraucherDaten['dusche'].lpm) +
+                                                (anzahlWaschbecken * verbraucherDaten['waschbecken'].lpm);
+                
+                let totalVolumenstrom = (gleichzeitigeNotduschen * verbraucherDaten['notdusche'].lpm) + 
+                                        (gleichzeitigeAugenduschen * verbraucherDaten['augendusche'].lpm) + 
+                                        qZeLpm;
+                
+                theoretischerGesamtVolumenstromOutput.textContent = theoretischerVolumenstrom.toFixed(2) + ' l/min';
+                gesamtZeOutput.textContent = summeZe.toFixed(1);
+                gesamtVolumenstromOutput.textContent = totalVolumenstrom.toFixed(2) + ' l/min';
+                
+                updateStichleitungenUI();
+                calculate();
+            }
+
+            function calculate() {
+                let Q_lpm_main = parseFloat(gesamtVolumenstromOutput.textContent) || 0;
+                
+                const L_main = parseFloat(laengeInput.value) || 0;
+                const p_supply = parseFloat(versorgungsdruckInput.value) || 0;
+                const p_min_required = parseFloat(mindestdruckInput.value) || 0;
+                const formteile_zuschlag_main = parseFloat(formteileInput.value) / 100 || 0;
+                const system = systemSelect.value;
+                const rohr_id_main = rohrSelect.value;
+                const rohr_main = rohrdaten[rohr_id_main];
+                const k_roughness = parseFloat(materialSelect.value);
+                const rho = 1000;
+                const nu = 1.004e-6;
+
+                if (isNaN(Q_lpm_main) || isNaN(L_main) || isNaN(p_supply) || isNaN(p_min_required) || isNaN(formteile_zuschlag_main) || !rohr_main) {
+                    return;
+                }
+
+                if (system === 'ring') {
+                    Q_lpm_main /= 2;
+                }
+                const Q_mps_main = (Q_lpm_main / 60) / 1000;
+
+                const A_main = Math.PI * Math.pow(rohr_main.innen_d / 2, 2);
+                const v_main = Q_mps_main / A_main;
+                const reynolds_main = (v_main * rohr_main.innen_d) / nu;
+                
+                const lambda_main = 0.25 / Math.pow(Math.log10((k_roughness / (3.7 * rohr_main.innen_d)) + (5.74 / Math.pow(reynolds_main, 0.9))), 2);
+                
+                const delta_p_reib_pa_main = lambda_main * (L_main / rohr_main.innen_d) * (rho * Math.pow(v_main, 2) / 2);
+                const delta_p_form_pa_main = formteile_zuschlag_main * delta_p_reib_pa_main;
+                const delta_p_total_pa_main = delta_p_reib_pa_main + delta_p_form_pa_main;
+                let delta_p_total_bar_main = delta_p_total_pa_main / 100000;
+
+                if (delta_p_total_bar_main > p_supply) {
+                    delta_p_total_bar_main = p_supply;
+                }
+                
+                let max_stichleitung_verlust = 0;
+
+                if (stichleitungToggle.checked) {
+                    document.querySelectorAll('#stichleitungen-container > div').forEach((stichleitungDiv) => {
+                        const stichleitungLaenge = parseFloat(stichleitungDiv.querySelector('[data-type="laenge"]').value) || 0;
+                        const stichleitungRohrId = stichleitungDiv.querySelector('[data-type="rohr"]').value;
+                        const stichleitungFormteileZuschlag = parseFloat(stichleitungDiv.querySelector('[data-type="formteile"]').value) / 100 || 0;
+                        
+                        const rohr_stich = rohrdaten[stichleitungRohrId];
+                        const consumerType = stichleitungDiv.getAttribute('data-consumer-type');
+                        const Q_lpm_stich = verbraucherDaten[consumerType].lpm;
+                        
+                        const Q_mps_stich = (Q_lpm_stich / 60) / 1000;
+                        
+                        let v_stich = 0;
+                        let delta_p_total_bar_stich = 0;
+
+                        if (Q_mps_stich > 0 && rohr_stich) {
+                            const A_stich = Math.PI * Math.pow(rohr_stich.innen_d / 2, 2);
+                            v_stich = Q_mps_stich / A_stich;
+                            const reynolds_stich = (v_stich * rohr_stich.innen_d) / nu;
+                            const lambda_stich = 0.25 / Math.pow(Math.log10((k_roughness / (3.7 * rohr_stich.innen_d)) + (5.74 / Math.pow(reynolds_stich, 0.9))), 2);
+
+                            const delta_p_reib_pa_stich = lambda_stich * (stichleitungLaenge / rohr_stich.innen_d) * (rho * Math.pow(v_stich, 2) / 2);
+                            const delta_p_form_pa_stich = stichleitungFormteileZuschlag * delta_p_reib_pa_stich;
+                            const delta_p_total_pa_stich = delta_p_reib_pa_stich + delta_p_form_pa_stich;
+                            delta_p_total_bar_stich = delta_p_total_pa_stich / 100000;
+                        }
+
+                        const stichleitungRestdruck = Math.max(0, (p_supply - delta_p_total_bar_main) - delta_p_total_bar_stich);
+
+                        const resultOutput = stichleitungDiv.querySelector('[data-output="result"]');
+                        
+                        let stichVColor = 'text-green-600';
+                        if (v_stich > 2.5) { stichVColor = 'text-red-600'; }
+                        else if (v_stich > 2.0) { stichVColor = 'text-orange-600'; }
+
+                        let stichpColor = 'text-green-600';
+                        if (stichleitungRestdruck < p_min_required) { stichpColor = 'text-red-600'; }
+
+                        const vSpan = `<span class="${stichVColor}">V: ${v_stich.toFixed(2)} m/s</span>`;
+                        const dpSpan = `<span class="text-gray-700">Δp: ${delta_p_total_bar_stich.toFixed(2)} bar</span>`;
+                        const pEndSpan = `<span class="${stichpColor}">Restdruck: ${stichleitungRestdruck.toFixed(2)} bar</span>`;
+
+                        resultOutput.innerHTML = `${vSpan}, ${dpSpan}, ${pEndSpan}`;
+                        
+                        if (delta_p_total_bar_stich > max_stichleitung_verlust) {
+                            max_stichleitung_verlust = delta_p_total_bar_stich;
+                        }
+                    });
+                }
+                
+                const p_end_before_stichleitung = p_supply - delta_p_total_bar_main;
+                const p_end = Math.max(0, p_end_before_stichleitung - max_stichleitung_verlust);
+
+                fliessgeschwindigkeitOutput.textContent = `${v_main.toFixed(2)} m/s`;
+                druckverlustOutput.textContent = `${delta_p_total_bar_main.toFixed(2)} bar`;
+                restdruckOutput.textContent = `${p_end.toFixed(2)} bar`;
+                
+                const rohrquerschnitt_cm2 = A_main * 10000;
+                const rohrvolumen_l = A_main * L_main * 1000;
+                const spuelzeit_min = rohrvolumen_l / spuelVolumenstrom;
+                
+                querschnittOutput.textContent = `${rohrquerschnitt_cm2.toFixed(2)} cm²`;
+                volumenOutput.textContent = `${rohrvolumen_l.toFixed(2)} l`;
+                spuelvolumenOutput.textContent = `Spülvolumen: ${rohrvolumen_l.toFixed(2)} l`;
+                spuelzeitOutput.textContent = `Spülzeit: ${spuelzeit_min.toFixed(2)} min`;
+
+                let vStatusColor = 'text-green-600';
+                let vStatusText = 'Status: Sehr gut';
+                let pStatusColor = 'text-green-600';
+                let pStatusText = 'Status: Ausreichend';
+                let hinweisHTML = '';
+
+                if (v_main > 2.5) {
+                    vStatusColor = 'text-red-600';
+                    vStatusText = 'Status: Stark erhöht!';
+                    hinweisHTML += 'Die Fließgeschwindigkeit der Hauptleitung ist unzulässig hoch. Dies führt zu Lärm, Erosion und erhöhtem Druckverlust. <br>';
+                } else if (v_main > 2.0) {
+                    vStatusColor = 'text-orange-600';
+                    vStatusText = 'Status: Erhöht';
+                    hinweisHTML += 'Die Fließgeschwindigkeit der Hauptleitung liegt im oberen Grenzbereich. Dies kann zu Lärm und erhöhtem Druckverlust führen. <br>';
+                }
+                
+                fliessgeschwindigkeitOutput.style.color = vStatusColor;
+                vStatusOutput.style.color = vStatusColor;
+                vStatusOutput.textContent = vStatusText;
+
+                if (p_end < p_min_required) {
+                    pStatusColor = 'text-red-600';
+                    pStatusText = 'Status: Nicht ausreichend!';
+                    hinweisHTML += `Der Restdruck von ${p_end.toFixed(2)} bar liegt unter dem erforderlichen Mindestdruck von ${p_min_required} bar. Die Anlage funktioniert nicht normgerecht.`;
+                }
+                restdruckOutput.style.color = pStatusColor;
+                pStatusOutput.style.color = pStatusColor;
+                pStatusOutput.textContent = pStatusText;
+                
+                if (hinweisHTML !== '') {
+                    hinweisBox.innerHTML = `<strong>Hinweis:</strong> <br>${hinweisHTML}`;
+                    hinweisBox.classList.remove('hidden');
+                    hinweisBox.style.color = 'white';
+                    if (vStatusColor === 'text-red-600' || pStatusColor === 'text-red-600') {
+                        hinweisBox.style.backgroundColor = 'red';
+                    } else if (vStatusColor === 'text-orange-600' || pStatusColor === 'text-orange-600') {
+                        hinweisBox.style.backgroundColor = 'orange';
+                    }
+                } else {
+                    hinweisBox.classList.add('hidden');
+                }
+
+                if (!stichleitungToggle.checked) {
+                     document.querySelectorAll('[data-output="result"]').forEach(output => {
+                        output.textContent = '--';
+                    });
+                }
+            }
+            
+            function resetCalculator() {
+                // Reset main inputs
+                document.getElementById('anzahl-notdusche').value = 0;
+                document.getElementById('anzahl-augendusche').value = 0;
+                document.getElementById('gleichzeitigkeit-notdusche').value = 0;
+                document.getElementById('gleichzeitigkeit-augendusche').value = 0;
+                document.getElementById('anzahl-wc-spuelkasten').value = 0;
+                document.getElementById('anzahl-wc-druckspueler').value = 0;
+                document.getElementById('anzahl-urinal-druckspueler').value = 0;
+                document.getElementById('anzahl-dusche').value = 0;
+                document.getElementById('anzahl-waschbecken').value = 0;
+                document.getElementById('korrektur-ze').value = 0;
+                document.getElementById('korrektur-volumenstrom').value = 0;
+                document.getElementById('laenge').value = 80;
+                document.getElementById('versorgungsdruck').value = 5;
+                document.getElementById('mindestdruck').value = 1.5;
+                document.getElementById('formteile').value = 20;
+                document.getElementById('rohr').value = 32;
+                document.getElementById('material').value = '0.0000015';
+                document.getElementById('system').value = 'reihe';
+
+                // Reset stichleitung toggle
+                document.getElementById('stichleitung-toggle').checked = false;
+                document.getElementById('stichleitungen-container').innerHTML = '';
+
+                // Trigger recalculation
+                updateVolumenstrom();
+            }
+
+            const allInputs = [
+                ...Object.values(anzahlInputs),
+                gleichzeitigkeitNotduscheInput,
+                gleichzeitigkeitAugenduscheInput,
+                korrekturZeInput,
+                korrekturVolumenstromInput,
+                laengeInput,
+                versorgungsdruckInput,
+                mindestdruckInput,
+                formteileInput,
+                rohrSelect,
+                materialSelect,
+                systemSelect
+            ];
+
+            allInputs.forEach(input => {
+                input.addEventListener('input', updateVolumenstrom);
+            });
+            
+            stichleitungToggle.addEventListener('change', updateStichleitungenUI);
+            document.getElementById('stichleitungen-container').addEventListener('input', calculate);
+            resetButton.addEventListener('click', resetCalculator);
+
+            updateVolumenstrom();
+        });
+    </script>
+</body>
+</html>
